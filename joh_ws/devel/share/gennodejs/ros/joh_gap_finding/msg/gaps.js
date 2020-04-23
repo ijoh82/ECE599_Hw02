@@ -19,6 +19,7 @@ class gaps {
     if (initObj === null) {
       // initObj === null is a special case for deserialization where we don't initialize fields
       this.numOfGaps = null;
+      this.width = null;
     }
     else {
       if (initObj.hasOwnProperty('numOfGaps')) {
@@ -27,6 +28,12 @@ class gaps {
       else {
         this.numOfGaps = 0;
       }
+      if (initObj.hasOwnProperty('width')) {
+        this.width = initObj.width
+      }
+      else {
+        this.width = 0.0;
+      }
     }
   }
 
@@ -34,6 +41,8 @@ class gaps {
     // Serializes a message object of type gaps
     // Serialize message field [numOfGaps]
     bufferOffset = _serializer.int32(obj.numOfGaps, buffer, bufferOffset);
+    // Serialize message field [width]
+    bufferOffset = _serializer.float32(obj.width, buffer, bufferOffset);
     return bufferOffset;
   }
 
@@ -43,11 +52,13 @@ class gaps {
     let data = new gaps(null);
     // Deserialize message field [numOfGaps]
     data.numOfGaps = _deserializer.int32(buffer, bufferOffset);
+    // Deserialize message field [width]
+    data.width = _deserializer.float32(buffer, bufferOffset);
     return data;
   }
 
   static getMessageSize(object) {
-    return 4;
+    return 8;
   }
 
   static datatype() {
@@ -57,13 +68,14 @@ class gaps {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '80967cdca74685dc952c88f8276188b1';
+    return '7907d1a64f5c611284b7ec1a5e86c172';
   }
 
   static messageDefinition() {
     // Returns full string definition for message
     return `
     int32 numOfGaps
+    float32 width
     
     `;
   }
@@ -79,6 +91,13 @@ class gaps {
     }
     else {
       resolved.numOfGaps = 0
+    }
+
+    if (msg.width !== undefined) {
+      resolved.width = msg.width;
+    }
+    else {
+      resolved.width = 0.0
     }
 
     return resolved;

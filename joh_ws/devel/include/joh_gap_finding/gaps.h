@@ -24,10 +24,12 @@ struct gaps_
   typedef gaps_<ContainerAllocator> Type;
 
   gaps_()
-    : numOfGaps(0)  {
+    : numOfGaps(0)
+    , width(0.0)  {
     }
   gaps_(const ContainerAllocator& _alloc)
-    : numOfGaps(0)  {
+    : numOfGaps(0)
+    , width(0.0)  {
   (void)_alloc;
     }
 
@@ -35,6 +37,9 @@ struct gaps_
 
    typedef int32_t _numOfGaps_type;
   _numOfGaps_type numOfGaps;
+
+   typedef float _width_type;
+  _width_type width;
 
 
 
@@ -65,7 +70,8 @@ return s;
 template<typename ContainerAllocator1, typename ContainerAllocator2>
 bool operator==(const ::joh_gap_finding::gaps_<ContainerAllocator1> & lhs, const ::joh_gap_finding::gaps_<ContainerAllocator2> & rhs)
 {
-  return lhs.numOfGaps == rhs.numOfGaps;
+  return lhs.numOfGaps == rhs.numOfGaps &&
+    lhs.width == rhs.width;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -122,12 +128,12 @@ struct MD5Sum< ::joh_gap_finding::gaps_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "80967cdca74685dc952c88f8276188b1";
+    return "7907d1a64f5c611284b7ec1a5e86c172";
   }
 
   static const char* value(const ::joh_gap_finding::gaps_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x80967cdca74685dcULL;
-  static const uint64_t static_value2 = 0x952c88f8276188b1ULL;
+  static const uint64_t static_value1 = 0x7907d1a64f5c6112ULL;
+  static const uint64_t static_value2 = 0x84b7ec1a5e86c172ULL;
 };
 
 template<class ContainerAllocator>
@@ -147,6 +153,7 @@ struct Definition< ::joh_gap_finding::gaps_<ContainerAllocator> >
   static const char* value()
   {
     return "int32 numOfGaps\n"
+"float32 width\n"
 ;
   }
 
@@ -166,6 +173,7 @@ namespace serialization
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
       stream.next(m.numOfGaps);
+      stream.next(m.width);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -186,6 +194,8 @@ struct Printer< ::joh_gap_finding::gaps_<ContainerAllocator> >
   {
     s << indent << "numOfGaps: ";
     Printer<int32_t>::stream(s, indent + "  ", v.numOfGaps);
+    s << indent << "width: ";
+    Printer<float>::stream(s, indent + "  ", v.width);
   }
 };
 

@@ -323,6 +323,63 @@ geometry_msgs::Vector3  getCenterOfGap(std::vector<float> coordXData,
     
 
 
+// get width of gap
+float getWidth(std::vector<float> coordXData, std::vector<float> coordYData, 
+        std::vector<int> whichClst, int bestGapClst)
+{
+    int sizeData = coordXData.size();
+    float aveCoordX = 0.0;
+    float aveCoordY = 0.0;
+    int count = 0;
+    
+    for (int i=0; i<sizeData; i++) 
+    {
+        if (whichClst[i] == bestGapClst) 
+        {
+            aveCoordX = aveCoordX + coordXData[i];
+            aveCoordY = aveCoordY + coordYData[i];
+            count ++;
+         }
+    }
+
+    aveCoordX = aveCoordX / count;
+    aveCoordY = aveCoordY / count;
+    
+    float minX = aveCoordX;
+    float maxX = aveCoordX;
+    float minY = aveCoordY;
+    float maxY = aveCoordY;
+    for (int i=0; i<sizeData; i++) 
+    {
+        if (whichClst[i] == bestGapClst) 
+        {
+            if (minX > coordXData[i])
+            {
+                minX = coordXData[i];
+            }
+            if (maxX < coordXData[i])
+            {
+                maxX = coordXData[i];
+            }
+            if (minY > coordYData[i])
+            {
+                minY = coordYData[i];
+            }
+            if (maxY < coordYData[i])
+            {
+                maxY = coordYData[i];
+            }
+         }
+    }
+    float width;
+    if (abs(aveCoordY / aveCoordX) < 1)
+    {
+       width = abs(maxY - minY);
+    } else {
+       width = abs(maxX - minX);
+    }
+    return width;
+}
 
 
 int main(int argc, char **argv) {
@@ -387,8 +444,13 @@ int main(int argc, char **argv) {
             int numOfGaps = countAndBest[0];
             int bestGap   = countAndBest[1];
 
+            // get width of best gap
+            float widthGap = getWidth(coordXData, coordYData, whichClusterData, bestGap);
+
+
             joh_gap_finding::gaps gapSummary;
             gapSummary.numOfGaps = numOfGaps;
+            gapSummary.width = widthGap;
 
             // get the center of gap
             int gapCluster = 1;
@@ -397,7 +459,7 @@ int main(int argc, char **argv) {
             //ROS_INFO_STREAM("num=" << myLdGap.numOfGaps);
 
             // publish the message to send
-            pub1.publish(myLdGap);
+            pub1.publish(gapSummary);
             pub2.publish(centroid);
 
         } // if goodToRun
